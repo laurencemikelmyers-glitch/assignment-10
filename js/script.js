@@ -1,15 +1,33 @@
 const apiKey = "k0tNKOu0zRVsXiIp0NmFx5nnFT3UpUny";
 
-const button = document.querySelector("#fetch-gif-btn");
-const input = document.querySelector("#search-input");
+const submitBtn = document.querySelector("#submit-btn");
 const container = document.querySelector("#gif-container");
+const yesButtons = document.querySelectorAll(".yes");
+const noButtons = document.querySelectorAll(".no");
 
-button.addEventListener("click", async () => {
-  const searchTerm = input.value.trim() || "funny";
+let score = 0;
 
-  container.innerHTML = "";
+yesButtons.forEach(button => {
+  button.addEventListener("click", () => {
+    score++;
+    button.disabled = true;
+    button.nextElementSibling.disabled = true;
+  });
+});
 
-  const endpoint = `https://api.giphy.com/v1/gifs/search?api_key=${apiKey}&q=${searchTerm}&limit=6`;
+noButtons.forEach(button => {
+  button.addEventListener("click", () => {
+    button.disabled = true;
+    button.previousElementSibling.disabled = true;
+  });
+});
+
+submitBtn.addEventListener("click", async () => {
+  const personality = score <= 1 ? "introvert" : score === 2 ? "ambivert" : "extrovert";
+
+  container.innerHTML = `<p class="text-center">Your personality type: ${personality.charAt(0).toUpperCase() + personality.slice(1)}</p>`;
+
+  const endpoint = `https://api.giphy.com/v1/gifs/search?api_key=${apiKey}&q=${personality}&limit=6`;
 
   const response = await fetch(endpoint);
   const data = await response.json();
